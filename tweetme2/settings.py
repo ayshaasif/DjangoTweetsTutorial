@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-z^r1j^phqo!9l_f6p@l#2$!cksl$b@(5ux0!sr@0c_-kh7b8#(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','.mydomain.com']
+LOGIN_URL = '/login'
+MAX_TWEET_LENGTH = 240
+TWEET_ACTION_OPTIONS = ['like','unlike','retweet']
 
 
 # Application definition
@@ -37,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'tweets',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +59,7 @@ ROOT_URLCONF = 'tweetme2.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,"templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,7 +81,7 @@ WSGI_APPLICATION = 'tweetme2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -115,9 +120,25 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEFAULT_RENDERER_CLASS = [
+        'rest_framework.renderers.JSONRenderer',
+      # 'rest_framework.renderers.BrowsableAPIRenderer',
+]
+
+if DEBUG:
+    DEFAULT_RENDERER_CLASS += [
+        'rest_framework.renderers.BrowsableAPIRenderer',
+               ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATON_CLASSES':[
+        'rest_framework.authentication.SessionAuthentication'
+        ],
+    'DEFAULT_RENDERER_CLASSES':DEFAULT_RENDERER_CLASS
+}
