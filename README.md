@@ -1,0 +1,2 @@
+# DjangoTweetsTutorial
+Tutorial Copy
